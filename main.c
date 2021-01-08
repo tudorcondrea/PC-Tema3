@@ -1,12 +1,13 @@
 #include "pbmedit.h"
 
-int get_cmd(char * command, char params[4][60])
+int get_cmd(char * command, char params[30][60])
 {
     char line[300], *tok;
     fgets(line, 300, stdin);
     if (strcmp(line, "\n") == 0)
         return 0;
-    line[strlen(line) - 1] = '\0';
+    if (line[strlen(line) - 1] == '\n')
+        line[strlen(line) - 1] = '\0';
     tok = strtok(line, " ");
     memcpy(command, tok, strlen(tok) + 1);
     int index = 0;
