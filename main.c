@@ -236,7 +236,7 @@ int main(void)
                     printf("No image loaded\n");
                 else
                 {
-                    printf("|||%s|||\n", params[1]);
+                    //printf("|||%s|||\n", params[1]);
                     if (strcmp(params[1], "ascii") == 0)
                         save(params[0], magic_word, c_limits, intensity, img, 1);
                     else
