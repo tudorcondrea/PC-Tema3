@@ -75,7 +75,7 @@ int main(void)
                 {
                     if (strcmp(params[0], "ALL") != 0)
                     {
-                        c_aux = resize(atoi(params[0]), atoi(params[1]), atoi(params[2]), atoi(params[3]));
+                        c_aux = resize(atoi(params[1]), atoi(params[0]), atoi(params[3]), atoi(params[2]));
                         if (c_aux.min.x > c_aux.max.x)
                             c_aux = resize(c_aux.max.x, c_aux.min.y, c_aux.min.x, c_aux.max.y);
                         if(c_aux.min.y > c_aux.max.y)
