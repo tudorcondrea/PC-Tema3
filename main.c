@@ -103,7 +103,7 @@ int main(void)
             }
             else if (strcmp(command, "ROTATE") == 0)
             {
-                int angle = atoi(params[0]);
+                int angle = atoi(params[0]) % 360;
                 if (img == NULL)
                     printf("No image loaded\n");
                 else
@@ -161,8 +161,11 @@ int main(void)
                                 else
                                     for (int i = 0; i < -1*angle / 90; i++)
                                     {
+                                        c_aux.min.x = c_aux.min.y = 0;
+                                        c_aux.max.x = c_restrict.max.x - c_restrict.min.x;
+                                        c_aux.max.y = c_restrict.max.y - c_restrict.min.y;
                                         triplet ** img_trans = transpose(img, &c_restrict);
-                                        swapRows(img_trans, c_restrict);
+                                        swapRows(img_trans, c_aux);
                                         for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
                                             for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
                                                 img[i][j] = img_trans[i - c_restrict.min.x][j - c_restrict.min.y];

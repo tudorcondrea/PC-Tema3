@@ -138,7 +138,10 @@ void swapRows(triplet ** img, corner cor)
 int validate_corners(corner c, corner c_limits)
 {
     if (c.min.x < 0 || c.min.x > c_limits.max.x || c.min.y < 0 || c.min.y > c_limits.max.y || c.max.x < 0 || c.max.x > c_limits.max.x || c.max.y < 0 || c.max.y > c_limits.max.y)
-        return 0;
+        {
+            //printf("%d %d %d %d\n%d %d %d %d\n", c.min.x, c.min.y, c.max.x, c.max.y, c_limits.min.x, c_limits.min.y, c_limits.max.x, c_limits.max.y);
+            return 0;
+        }
     else
         return 1;
 }
