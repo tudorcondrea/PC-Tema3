@@ -2,6 +2,8 @@
 
 int get_cmd(char * command, char params[30][60])
 {
+    for (int i = 0; i < 30; i++)
+        params[i][0] = 0;
     char line[300], *tok;
     fgets(line, 300, stdin);
     if (strcmp(line, "\n") == 0)
@@ -82,12 +84,12 @@ int main(void)
                         if(c_aux.min.y > c_aux.max.y)
                             c_aux = resize(c_aux.min.x, c_aux.max.y, c_aux.max.x, c_aux.min.y);
                         if (c_aux.min.x == c_aux.max.x || c_aux.min.y == c_aux.max.y)
-                            printf("Invalid coordinates\n");
+                            printf("Invalid set of coordinates\n");
                         else
                         {
                             c_aux = resize(c_aux.min.x, c_aux.min.y, c_aux.max.x - 1, c_aux.max.y - 1);
                             if (validate_corners(c_aux, c_limits) == 0)
-                                printf("Invalid coordinates\n");
+                                printf("Invalid set of coordinates\n");
                             else
                             {
                                 c_restrict = c_aux;
@@ -234,6 +236,7 @@ int main(void)
                     printf("No image loaded\n");
                 else
                 {
+                    printf("|||%s|||\n", params[1]);
                     if (strcmp(params[1], "ascii") == 0)
                         save(params[0], magic_word, c_limits, intensity, img, 1);
                     else
@@ -243,9 +246,12 @@ int main(void)
             }
             else if (strcmp(command, "EXIT") == 0)
             {
-                for (int i = 0; i <= c_limits.max.x; i++)
-                    free(img[i]);
-                free(img);
+                if (img != NULL)
+                {
+                    for (int i = 0; i <= c_limits.max.x; i++)
+                        free(img[i]);
+                    free(img);
+                }
                 return 0;
             }
         }
