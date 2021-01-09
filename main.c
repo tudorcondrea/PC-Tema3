@@ -68,7 +68,10 @@ int main(void)
                     printf("Loaded %s\n", params[0]);
                 }
                 else
+                {
+                    loaded = 0;
                     printf("Failed to load %s\n", params[0]);
+                }
             }
             else if (strcmp(command, "SELECT") == 0)
             {
@@ -106,7 +109,7 @@ int main(void)
             }
             else if (strcmp(command, "ROTATE") == 0)
             {
-                int angle = atoi(params[0]) % 360;
+                int angle = atoi(params[0]);
                 if (img == NULL)
                     printf("No image loaded\n");
                 else
@@ -118,7 +121,7 @@ int main(void)
                         if (compare_corners(c_restrict, c_limits) == 1)
                         {
                             if (angle > 0)
-                                for (int i = 0; i < angle / 90; i++)
+                                for (int i = 0; i < angle % 360 / 90; i++)
                                 {
                                     corner c_trans = c_limits;
                                     swapRows(img, c_limits);
@@ -131,7 +134,7 @@ int main(void)
                                     img = img_trans;
                                 }
                             else
-                                for (int i = 0; i < -1*angle / 90; i++)
+                                for (int i = 0; i < -1* (angle %360) / 90; i++)
                                 {
                                     corner c_trans = c_limits;
                                     triplet ** img_trans = transpose(img, &c_trans);
@@ -150,10 +153,11 @@ int main(void)
                             if (c_restrict.max.x - c_restrict.min.x == c_restrict.max.y - c_restrict.min.y)
                             {
                                 if (angle > 0)
-                                    for (int i = 0; i < angle / 90; i++)
+                                    for (int i = 0; i < angle % 360 / 90; i++)
                                     {
                                         swapRows(img, c_restrict);
                                         triplet ** img_trans = transpose(img, &c_restrict);
+                                        c_restrict = resize(c_restrict.min.y, c_restrict.min.x, c_restrict.max.y, c_restrict.max.x);
                                         for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
                                             for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
                                                     img[i][j] = img_trans[i - c_restrict.min.x][j - c_restrict.min.y];
@@ -162,17 +166,27 @@ int main(void)
                                         free(img_trans);
                                     }
                                 else
-                                    for (int i = 0; i < -1*angle / 90; i++)
+                                    for (int i = 0; i < -1*(angle % 360) / 90; i++)
                                     {
-                                        c_aux.min.x = c_aux.min.y = 0;
-                                        c_aux.max.x = c_restrict.max.x - c_restrict.min.x;
-                                        c_aux.max.y = c_restrict.max.y - c_restrict.min.y;
                                         triplet ** img_trans = transpose(img, &c_restrict);
+                                        c_restrict = resize(c_restrict.min.y, c_restrict.min.x, c_restrict.max.y, c_restrict.max.x);
+                                        c_aux = resize(0, 0, c_restrict.max.x - c_restrict.min.x, c_restrict.max.y - c_restrict.min.y);
+                                        //printf("%d %d %d %d\n", c_aux.min.x, c_aux.min.y, c_aux.max.x, c_aux.max.y);
                                         swapRows(img_trans, c_aux);
+                                        /*for (int i = 0; i <= c_aux.max.x; i++)
+                                        {
+                                            for (int j = 0; j <= c_aux.max.y; j++)
+                                                printf("%d ", img_trans[i][j].r);
+                                            printf("\n");
+                                        }*/
                                         for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
                                             for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
+                                            {
+                                                //printf("%d %d <=> %d %d\n", i, j, i - c_restrict.min.x, j - c_restrict.min.y);
                                                 img[i][j] = img_trans[i - c_restrict.min.x][j - c_restrict.min.y];
-                                        for (int i = 0; i <= c_restrict.max.x - c_restrict.min.x; i++)
+                                            }
+                                        //printf("ajunge aci");
+                                        for (int i = 0; i <= c_aux.max.x; i++)
                                             free(img_trans[i]);
                                         free(img_trans);
                                     }
@@ -253,6 +267,8 @@ int main(void)
                         free(img[i]);
                     free(img);
                 }
+                else
+                    printf("No image loaded\n");
                 return 0;
             }
         }

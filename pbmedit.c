@@ -176,11 +176,12 @@ void sepia(triplet ** img, corner c_restrict)
     for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
         for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
         {
-            int new_color = minimum(0.393 * img[i][j].r + 0.769 * img[i][j].g + 0.189 * img[i][j].b, 255);
+            int old_r = img[i][j].r, old_g = img[i][j].g, old_b = img[i][j].b;
+            int new_color = minimum(0.393 * old_r + 0.769 * old_g + 0.189 * old_b, 255);
             img[i][j].r = new_color;
-            new_color = minimum(0.349 * img[i][j].r + 0.686 * img[i][j].g + 0.168 * img[i][j].b, 255);
+            new_color = minimum(0.349 * old_r + 0.686 * old_g + 0.168 * old_b, 255);
             img[i][j].g = new_color;
-            new_color = minimum(0.272 * img[i][j].r + 0.534 * img[i][j].g + 0.131 * img[i][j].b, 255);
+            new_color = minimum(0.272 * old_r + 0.534 * old_g + 0.131 * old_b, 255);
             img[i][j].b = new_color;
         }
 }
