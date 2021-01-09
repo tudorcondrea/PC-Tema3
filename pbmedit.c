@@ -39,9 +39,9 @@ triplet ** load(char filename[], corner *c_limits, int * intensity, int * magic_
                 {
                     size_set = 1;
                     fscanf(img_file, "%d%d", &m, &n);
-                    img = (triplet **)malloc(n * sizeof(triplet *));
+                    img = (triplet **)calloc(n, sizeof(triplet *));
                     for (int i = 0; i < n; i++)
-                        img[i] = (triplet *)malloc(m * sizeof(triplet));
+                        img[i] = (triplet *)calloc(m, sizeof(triplet));
                     *c_limits = resize(0, 0, n - 1, m - 1);
                 }
                 else
@@ -104,9 +104,9 @@ corner resize(int x1, int y1, int x2, int y2)
 
 triplet ** transpose(triplet ** img, corner *cor)
 {
-    triplet ** trans_img = (triplet **)malloc(sizeof(triplet *) * ((*cor).max.y - (*cor).min.y + 1));
+    triplet ** trans_img = (triplet **)calloc(((*cor).max.y - (*cor).min.y + 1), sizeof(triplet *));
     for (int i = 0; i <= (*cor).max.y - (*cor).min.y; i++)
-        trans_img[i] = (triplet *)malloc(sizeof(triplet) * ((*cor).max.x - (*cor).min.x + 1));
+        trans_img[i] = (triplet *)calloc(((*cor).max.x - (*cor).min.x + 1), sizeof(triplet));
     for (int i = 0; i <= (*cor).max.x - (*cor).min.x; i++)
         for (int j = 0; j <= (*cor).max.y - (*cor).min.y; j++)
         {
@@ -152,9 +152,9 @@ triplet ** crop(triplet ** img, corner * c_crop, corner c_restrict)
     (*c_crop).min.x = (*c_crop).min.y = 0;
     (*c_crop).max.x = c_restrict.max.x - c_restrict.min.x;
     (*c_crop).max.y = c_restrict.max.y - c_restrict.min.y;
-    img_crop = (triplet **)malloc(sizeof(triplet *) * ((*c_crop).max.x + 1));
+    img_crop = (triplet **)calloc(((*c_crop).max.x + 1), sizeof(triplet *));
     for (int i = 0; i <= (*c_crop).max.x; i++)
-        img_crop[i] = (triplet *)malloc(sizeof(triplet) * ((*c_crop).max.y + 1));
+        img_crop[i] = (triplet *)calloc(((*c_crop).max.y + 1), sizeof(triplet));
     for (int i = 0; i <= (*c_crop).max.x; i++)
         for (int j = 0; j <= (*c_crop).max.y; j++)
             img_crop[i][j] = img[i + c_restrict.min.x][j + c_restrict.min.y];

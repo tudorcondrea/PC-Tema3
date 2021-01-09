@@ -112,10 +112,9 @@ int main(void)
                 else
                 {
                     if (angle % 90 != 0)
-                        printf("Invalid parameters\n");//"Unsupported rotation angle\n");
+                        printf("Unsupported rotation angle\n");
                     else
                     {
-                        printf("Rotated %d\n", angle);
                         if (compare_corners(c_restrict, c_limits) == 1)
                         {
                             if (angle > 0)
@@ -136,7 +135,7 @@ int main(void)
                                 {
                                     corner c_trans = c_limits;
                                     triplet ** img_trans = transpose(img, &c_trans);
-                                    swapRows(img_trans, c_limits);
+                                    swapRows(img_trans, c_trans);
                                     for (int i = 0; i <= c_limits.max.x; i++)
                                         free(img[i]);
                                     free(img);
@@ -144,6 +143,7 @@ int main(void)
                                     //printf("%d %d %d %d\n", c_restrict.min.x, c_restrict.min.y, c_restrict.max.x, c_restrict.max.y);
                                     img = img_trans;
                                 }
+                            printf("Rotated %d\n", angle);
                         }
                         else
                         {
@@ -176,6 +176,7 @@ int main(void)
                                             free(img_trans[i]);
                                         free(img_trans);
                                     }
+                                printf("Rotated %d\n", angle);
                             }
                             else
                                 printf("The selection must be square\n");
