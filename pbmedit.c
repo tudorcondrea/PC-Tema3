@@ -123,7 +123,7 @@ triplet ** transpose(triplet ** img, corner *cor)
 }
 
 //oglindeste randurile unei matrice fata de mijloc
-void swapRows(triplet ** img, corner cor)
+void swap_rows(triplet ** img, corner cor)
 {
     for (int i = cor.min.x; i <= (cor.max.x + cor.min.x) / 2; i++)
         for (int j = cor.min.y; j <= cor.max.y; j++)

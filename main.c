@@ -159,7 +159,7 @@ int main(void)
 								for (int i = 0; i < angle % 360 / 90; i++)
 								{
 									corner c_trans = c_limits;
-									swapRows(img, c_limits);
+									swap_rows(img, c_limits);
 									triplet ** img_trans = transpose(img, &c_trans);
 									for (int i = 0; i <= c_limits.max.x; i++)
 										free(img[i]);
@@ -172,7 +172,7 @@ int main(void)
 								{
 									corner c_trans = c_limits;
 									triplet ** img_trans = transpose(img, &c_trans);
-									swapRows(img_trans, c_trans);
+									swap_rows(img_trans, c_trans);
 									for (int i = 0; i <= c_limits.max.x; i++)
 										free(img[i]);
 									free(img);
@@ -188,7 +188,7 @@ int main(void)
 								if (angle > 0)
 									for (int i = 0; i < angle % 360 / 90; i++)
 									{
-										swapRows(img, c_restrict);
+										swap_rows(img, c_restrict);
 										triplet ** img_trans = transpose(img, &c_restrict);
 										c_restrict = resize(c_restrict.min.y, c_restrict.min.x, c_restrict.max.y, c_restrict.max.x);
 										for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
@@ -204,7 +204,7 @@ int main(void)
 										triplet ** img_trans = transpose(img, &c_restrict);
 										c_restrict = resize(c_restrict.min.y, c_restrict.min.x, c_restrict.max.y, c_restrict.max.x);
 										c_aux = resize(0, 0, c_restrict.max.x - c_restrict.min.x, c_restrict.max.y - c_restrict.min.y);
-										swapRows(img_trans, c_aux);
+										swap_rows(img_trans, c_aux);
 										for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
 											for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
 												img[i][j] = img_trans[i - c_restrict.min.x][j - c_restrict.min.y];
