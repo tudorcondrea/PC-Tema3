@@ -7,6 +7,7 @@ double minimum(double a, double b)
     else
         return b;
 }
+
 //returneaza un pointer catre o matrice rgb si seteaza cateva informatii esentiale
 triplet ** load(char filename[], corner *c_limits, int * intensity, int * magic_word)
 {
@@ -120,6 +121,7 @@ triplet ** transpose(triplet ** img, corner *cor)
     (*cor).max.y = aux;
     return trans_img;
 }
+
 //oglindeste randurile unei matrice fata de mijloc
 void swapRows(triplet ** img, corner cor)
 {
@@ -131,16 +133,16 @@ void swapRows(triplet ** img, corner cor)
             img[cor.max.x - i + cor.min.x][j] = aux;
         }
 }
+
 //verifica daca limitele date se afla in interiorul imaginii
 int validate_corners(corner c, corner c_limits)
 {
     if (c.min.x < 0 || c.min.x > c_limits.max.x || c.min.y < 0 || c.min.y > c_limits.max.y || c.max.x < 0 || c.max.x > c_limits.max.x || c.max.y < 0 || c.max.y > c_limits.max.y)
-        {
-            return 0;
-        }
+        return 0;
     else
         return 1;
 }
+
 //returneaza un pointer catre o copie a unei submatrice intre limitele date
 triplet ** crop(triplet ** img, corner * c_crop, corner c_restrict)
 {
@@ -181,6 +183,7 @@ void sepia(triplet ** img, corner c_restrict)
             img[i][j].b = round(new_color);
         }
 }
+
 //genereaza un fisier nou in care se afla imaginea cu editarile efectuate
 void save(char filename[], int magic_word, corner c_limits, int intensity, triplet ** img, int ascii)
 {
