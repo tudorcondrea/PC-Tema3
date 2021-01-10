@@ -1,13 +1,13 @@
 #include "pbmedit.h"
 
-int minimum(int a, int b)
+double minimum(double a, double b)
 {
     if (a < b)
         return a;
     else
         return b;
 }
-
+//returneaza un pointer catre o matrice rgb si seteaza cateva informatii esentiale
 triplet ** load(char filename[], corner *c_limits, int * intensity, int * magic_word)
 {
     triplet ** img = NULL;
@@ -101,7 +101,7 @@ corner resize(int x1, int y1, int x2, int y2)
     temp.max.y = y2;
     return temp;
 }
-
+//returneaza un pointer catre o copie a submatricei transpusa data de img intre limitele date de cor
 triplet ** transpose(triplet ** img, corner *cor)
 {
     triplet ** trans_img = (triplet **)calloc(((*cor).max.y - (*cor).min.y + 1), sizeof(triplet *));
@@ -110,7 +110,6 @@ triplet ** transpose(triplet ** img, corner *cor)
     for (int i = 0; i <= (*cor).max.x - (*cor).min.x; i++)
         for (int j = 0; j <= (*cor).max.y - (*cor).min.y; j++)
         {
-            //printf("%d %d <=> %d %d\n", j, i, i + (*cor).min.x, j + (*cor).min.y);
             trans_img[j][i] = img[i + (*cor).min.x][j + (*cor).min.y];
         }
     int aux = (*cor).min.x;
@@ -121,31 +120,28 @@ triplet ** transpose(triplet ** img, corner *cor)
     (*cor).max.y = aux;
     return trans_img;
 }
-
+//oglindeste randurile unei matrice fata de mijloc
 void swapRows(triplet ** img, corner cor)
 {
     for (int i = cor.min.x; i <= (cor.max.x + cor.min.x) / 2; i++)
         for (int j = cor.min.y; j <= cor.max.y; j++)
         {
-            //printf("%d %d %d %d\n", i, j, cor.max.x - i + cor.min.x, j);
             triplet aux = img[i][j];
             img[i][j] = img[cor.max.x - i + cor.min.x][j];
             img[cor.max.x - i + cor.min.x][j] = aux;
         }
-    //printf("\n");
 }
-
+//verifica daca limitele date se afla in interiorul imaginii
 int validate_corners(corner c, corner c_limits)
 {
     if (c.min.x < 0 || c.min.x > c_limits.max.x || c.min.y < 0 || c.min.y > c_limits.max.y || c.max.x < 0 || c.max.x > c_limits.max.x || c.max.y < 0 || c.max.y > c_limits.max.y)
         {
-            //printf("%d %d %d %d\n%d %d %d %d\n", c.min.x, c.min.y, c.max.x, c.max.y, c_limits.min.x, c_limits.min.y, c_limits.max.x, c_limits.max.y);
             return 0;
         }
     else
         return 1;
 }
-
+//returneaza un pointer catre o copie a unei submatrice intre limitele date
 triplet ** crop(triplet ** img, corner * c_crop, corner c_restrict)
 {
     triplet ** img_crop;
@@ -177,19 +173,20 @@ void sepia(triplet ** img, corner c_restrict)
         for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
         {
             int old_r = img[i][j].r, old_g = img[i][j].g, old_b = img[i][j].b;
-            int new_color = minimum(0.393 * old_r + 0.769 * old_g + 0.189 * old_b, 255);
-            img[i][j].r = new_color;
+            double new_color = minimum(0.393 * old_r + 0.769 * old_g + 0.189 * old_b, 255);
+            img[i][j].r = round(new_color);
             new_color = minimum(0.349 * old_r + 0.686 * old_g + 0.168 * old_b, 255);
-            img[i][j].g = new_color;
+            img[i][j].g = round(new_color);
             new_color = minimum(0.272 * old_r + 0.534 * old_g + 0.131 * old_b, 255);
-            img[i][j].b = new_color;
+            img[i][j].b = round(new_color);
         }
 }
-
+//genereaza un fisier nou in care se afla imaginea cu editarile efectuate
 void save(char filename[], int magic_word, corner c_limits, int intensity, triplet ** img, int ascii)
 {
     FILE * out = fopen(filename, "wb");
     int new_magic_word;
+    //se schimba magic wordul in functie de optiunea de salvare data
     if (ascii == 1)
     {
         if (magic_word == 1 || magic_word == 2 || magic_word == 3)
@@ -204,6 +201,7 @@ void save(char filename[], int magic_word, corner c_limits, int intensity, tripl
         else
             new_magic_word = magic_word + 3;
     }
+    //headerul e mereu text deci folosim afisarea ascii
     fprintf(out, "P%d\n%d %d\n%d\n", new_magic_word, c_limits.max.y + 1, c_limits.max.x + 1, intensity);
     if (ascii == 1)
         for (int i = 0; i <= c_limits.max.x; i++)

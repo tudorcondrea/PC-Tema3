@@ -1,5 +1,5 @@
 #include "pbmedit.h"
-
+//functie pentru citit comanda care intoarce 1 daca e valida, 0 daca nu e valida
 int get_cmd(char * command, char params[30][60])
 {
     for (int i = 0; i < 30; i++)
@@ -23,14 +23,29 @@ int get_cmd(char * command, char params[30][60])
         }
     }
     index--;
+    //verificare pentru diferite lucruri care ar face o comanda nevalida
     int ok = 0;
     if (strcmp(command, "LOAD") == 0 || strcmp(command, "SELECT") == 0 || strcmp(command, "SELECT ALL") == 0 || strcmp(command, "ROTATE") == 0 || strcmp(command, "CROP") == 0 || strcmp(command, "GRAYSCALE") == 0 || strcmp(command, "SEPIA") == 0 || strcmp(command, "SAVE") == 0 || strcmp(command, "EXIT") == 0)
         ok = 1;
     if (strcmp(command, "SAVE") == 0 && index == 1 && strcmp(params[1], "ascii") != 0)
         ok = 0;
+    if (strcmp(command, "SELECT") == 0 && strcmp(params[0], "ALL") != 0)
+    {
+        if (index < 3)
+            ok = 0;
+        else
+            for (int i = 0; i < 4; i++)
+                for (long unsigned int j = 0; j < strlen(params[i]); j++)
+                    if (isdigit(params[i][j]) == 0 && params[i][j] != '-')
+                        ok = 0;
+    }
+    if (strcmp(command, "ROTATE") == 0)
+        for (long unsigned int i = 0; i < strlen(params[0]); i++)
+            if (isdigit(params[0][i] == 0) && params[0][i] != '-')
+                ok = 0;
     return ok;
 }
-
+//returneaza 1 daca limitile sunt egale, 0 daca nu sunt
 int compare_corners(corner c1, corner c2)
 {
     if (c1.min.x != c2.min.x || c1.min.y != c2.min.y || c1.max.x != c2.max.x || c1.max.y != c2.max.y)
@@ -52,6 +67,7 @@ int main(void)
             printf("Invalid command\n");
         else
         {
+            //fiecare comanda are o logica separata efectuata cu ajutorul unor functii
             if (strcmp(command, "LOAD") == 0)
             {
                 if (loaded == 1)
@@ -79,13 +95,29 @@ int main(void)
                     printf("No image loaded\n");
                 else
                 {
+                    //daca vrea o selectie specifica
                     if (strcmp(params[0], "ALL") != 0)
                     {
+                        //corectam inputurile inversate
+                        //functiile de editare functioneaza cu o abordare de puncte in spatiu, fata de intervale
                         c_aux = resize(atoi(params[1]), atoi(params[0]), atoi(params[3]), atoi(params[2]));
                         if (c_aux.min.x > c_aux.max.x)
+                        {
                             c_aux = resize(c_aux.max.x, c_aux.min.y, c_aux.min.x, c_aux.max.y);
+                            char temp_str[50];
+                            strcpy(temp_str, params[1]);
+                            strcpy(params[1], params[3]);
+                            strcpy(params[3], temp_str);
+                        }
                         if(c_aux.min.y > c_aux.max.y)
+                        {
                             c_aux = resize(c_aux.min.x, c_aux.max.y, c_aux.max.x, c_aux.min.y);
+                            char temp_str[50];
+                            strcpy(temp_str, params[0]);
+                            strcpy(params[0], params[2]);
+                            strcpy(params[2], temp_str);
+                        }
+                        //nu accepta linii sau puncte de grosime 0
                         if (c_aux.min.x == c_aux.max.x || c_aux.min.y == c_aux.max.y)
                             printf("Invalid set of coordinates\n");
                         else
@@ -109,6 +141,8 @@ int main(void)
             }
             else if (strcmp(command, "ROTATE") == 0)
             {
+                //pentru rotatia la dreapta folosesc transpusa randurile oglindite anterior
+                //pentru rotatia la stanga folosesc transpusa la care ii oglindesc randurile
                 int angle = atoi(params[0]);
                 if (img == NULL)
                     printf("No image loaded\n");
@@ -130,7 +164,6 @@ int main(void)
                                         free(img[i]);
                                     free(img);
                                     c_restrict = c_limits = c_trans;
-                                    //printf("%d %d %d %d\n", c_restrict.min.x, c_restrict.min.y, c_restrict.max.x, c_restrict.max.y);
                                     img = img_trans;
                                 }
                             else
@@ -143,7 +176,6 @@ int main(void)
                                         free(img[i]);
                                     free(img);
                                     c_limits = c_restrict = c_trans;
-                                    //printf("%d %d %d %d\n", c_restrict.min.x, c_restrict.min.y, c_restrict.max.x, c_restrict.max.y);
                                     img = img_trans;
                                 }
                             printf("Rotated %d\n", angle);
@@ -171,21 +203,12 @@ int main(void)
                                         triplet ** img_trans = transpose(img, &c_restrict);
                                         c_restrict = resize(c_restrict.min.y, c_restrict.min.x, c_restrict.max.y, c_restrict.max.x);
                                         c_aux = resize(0, 0, c_restrict.max.x - c_restrict.min.x, c_restrict.max.y - c_restrict.min.y);
-                                        //printf("%d %d %d %d\n", c_aux.min.x, c_aux.min.y, c_aux.max.x, c_aux.max.y);
                                         swapRows(img_trans, c_aux);
-                                        /*for (int i = 0; i <= c_aux.max.x; i++)
-                                        {
-                                            for (int j = 0; j <= c_aux.max.y; j++)
-                                                printf("%d ", img_trans[i][j].r);
-                                            printf("\n");
-                                        }*/
                                         for (int i = c_restrict.min.x; i <= c_restrict.max.x; i++)
                                             for (int j = c_restrict.min.y; j <= c_restrict.max.y; j++)
                                             {
-                                                //printf("%d %d <=> %d %d\n", i, j, i - c_restrict.min.x, j - c_restrict.min.y);
                                                 img[i][j] = img_trans[i - c_restrict.min.x][j - c_restrict.min.y];
                                             }
-                                        //printf("ajunge aci");
                                         for (int i = 0; i <= c_aux.max.x; i++)
                                             free(img_trans[i]);
                                         free(img_trans);
@@ -251,7 +274,6 @@ int main(void)
                     printf("No image loaded\n");
                 else
                 {
-                    //printf("|||%s|||\n", params[1]);
                     if (strcmp(params[1], "ascii") == 0)
                         save(params[0], magic_word, c_limits, intensity, img, 1);
                     else

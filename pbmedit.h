@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 typedef struct{
     int x;
@@ -29,4 +30,4 @@ triplet ** crop(triplet ** img, corner * c_crop, corner c_restrict);
 void grayscale(triplet ** img, corner c_restrict);
 void sepia(triplet ** img, corner c_restrict);
 void save(char filename[], int magic_word, corner c_limits, int intensity, triplet ** img, int ascii);
-int minimum(int a, int b);
+double minimum(double a, double b);

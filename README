@@ -1,0 +1,36 @@
+Condrea Tudor-Daniel 314CA
+Explicare sumara a realizarii implementarii temei:
+-folosesc doua structuri pentru retinerea limitelor imaginii sau a restrictionarii date de SELECT prin intermediul a 2 puncte de tip A(x,y)
+-La pornire programul intra intr-o ciclare infinita, rupta de comanda EXIT, care accepta comenzi
+-Programul citeste o comanda urmata de niste parametrii pe care ii analizeaza si intoarce un semnal de 0 daca nu respecta inputul normal, sau 1 daca este totul ok
+-LOAD:
+    -deschide fisierul in mod text
+    -citeste cate un caracter pentru a vedea ce face mai departe
+    -daca citeste un P, urmeaza magic wordul
+    -daca citeste o cifra, da inapoi cu un caracter pentru a putea citi cu fscanf/fread
+    -cand citeste cifra, mai intai seteaza marimile, dupa care intensitatea pixelilor, dupa care in alta bucla restul imaginii, citind cate o linie o data
+    -daca citeste un #, mai citeste inca 1000 de caractere pe acelasi rand pentru a scapa de comentarii
+    -aceasta abordare cu pasi mici si citiri lente cu cate un caracter permite pozitionarea comentariilor aproape oriunde, inclusiv la inceput de tot sau intre randuri si dupa o linie din matrice
+    -la final efectueaza si un SELECT ALL
+-SELECT:
+    -mai intai repozitioneaza parametrii pentru a fi putea fi folositi ca niste puncte in spatiu de tipul A(x1,y1);B(x2,y2) si nu intervale [x1, x2];[y1, y2]
+    -face o serie de verificari sa vada daca setul dat este corect
+    -daca parametrul este ALL trece direct la selectia maxima
+-ROTATE:
+    -trateaza cazurile de SELECT ALL si SELECT variabil separat
+    -sunt utilizate operatiile de transpunere, respectiv oglindire a randurilor
+    -daca se face rotatie la dreapta trebuie: oglindire -> transpunere
+                          la stanga trebuie: transpunere -> oglindire
+    -se inverseaza limitele in cazul transpunerii intregii imaginii
+-CROP:
+    -face o matrice noua cu marimile date
+    -sterge matricea veche si o inlocuieste cu cea noua
+-GRAYSCALE:
+    -inlocuieste culorile cu media aritmetica a tuturor adunate
+-SEPIA:
+    -aplica formula data si rotunjita
+-SAVE:
+    -creeaza un fisier nou cu toate informatiile necesare: magic word, marimi, intensitate si pixelii
+    -modalitatea retinerii pixelilor este data de prezenta parametrului optional "ascii"
+-EXIT:
+    -dezaloca memoria si iese din program
